@@ -1,47 +1,42 @@
-<section>
+<section class="profile-section">
     <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Alterar senha') }}
-        </h2>
-
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __('Certifique-se de que sua conta esteja usando uma senha longa e aleatória para permanecer segura.') }}
-        </p>
+        <h2>Alterar senha</h2>
+        <p>Certifique-se de que sua conta esteja usando uma senha longa e aleatória para permanecer segura.</p>
     </header>
 
-    <form method="post" action="{{ route('password.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('password.update') }}">
         @csrf
         @method('put')
 
-        <div>
-            <x-input-label for="update_password_current_password" :value="__('Senha antiga')" />
-            <x-text-input id="update_password_current_password" name="current_password" type="password" class="mt-1 block w-full" autocomplete="current-password" />
-            <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
+        <div class="profile-form-group">
+            <label for="update_password_current_password" class="profile-label">Senha antiga</label>
+            <input id="update_password_current_password" name="current_password" type="password" class="profile-input" autocomplete="current-password" placeholder="••••••••">
+            @error('current_password', 'updatePassword')
+                <span class="profile-error">{{ $message }}</span>
+            @enderror
         </div>
 
-        <div>
-            <x-input-label for="update_password_password" :value="__('Senha nova')" />
-            <x-text-input id="update_password_password" name="password" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-            <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
+        <div class="profile-form-group">
+            <label for="update_password_password" class="profile-label">Senha nova</label>
+            <input id="update_password_password" name="password" type="password" class="profile-input" autocomplete="new-password" placeholder="••••••••">
+            @error('password', 'updatePassword')
+                <span class="profile-error">{{ $message }}</span>
+            @enderror
         </div>
 
-        <div>
-            <x-input-label for="update_password_password_confirmation" :value="__('Confirmar senha nova')" />
-            <x-text-input id="update_password_password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-            <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
+        <div class="profile-form-group">
+            <label for="update_password_password_confirmation" class="profile-label">Confirmar senha nova</label>
+            <input id="update_password_password_confirmation" name="password_confirmation" type="password" class="profile-input" autocomplete="new-password" placeholder="••••••••">
+            @error('password_confirmation', 'updatePassword')
+                <span class="profile-error">{{ $message }}</span>
+            @enderror
         </div>
 
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Salvar') }}</x-primary-button>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <button type="submit" class="profile-btn-primary">Salvar</button>
 
             @if (session('status') === 'password-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600"
-                >{{ __('Salvo') }}</p>
+                <span class="profile-success">Salvo!</span>
             @endif
         </div>
     </form>

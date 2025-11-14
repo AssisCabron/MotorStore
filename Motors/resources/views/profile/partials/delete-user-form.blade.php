@@ -1,55 +1,62 @@
-<section class="space-y-6">
+<section class="profile-section">
     <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Apagar conta') }}
-        </h2>
-
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __('Depois que sua conta for excluída, todos os seus recursos e dados serão excluídos permanentemente. Antes de excluir sua conta, baixe todos os dados ou informações que deseja reter.') }}
-        </p>
+        <h2>Apagar conta</h2>
+        <p>Depois que sua conta for excluída, todos os seus recursos e dados serão excluídos permanentemente. Antes de excluir sua conta, baixe todos os dados ou informações que deseja reter.</p>
     </header>
 
-    <x-danger-button
-        x-data=""
-        x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"
-    >{{ __('Apagar conta') }}</x-danger-button>
+    <button onclick="openDeleteModal()" class="profile-btn-danger">
+        Apagar conta
+    </button>
 
-    <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
-        <form method="post" action="{{ route('profile.destroy') }}" class="p-6">
-            @csrf
-            @method('delete')
+    <!-- Modal -->
+    <div id="deleteModal" style="display: none;" class="modal-overlay" onclick="if(event.target === this) closeDeleteModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2>Tem certeza que deseja deletar sua conta?</h2>
+            <p>Depois que sua conta for excluída, todos os seus recursos e dados serão excluídos permanentemente. Antes de excluir sua conta, baixe todos os dados ou informações que deseja reter.</p>
 
-            <h2 class="text-lg font-medium text-gray-900">
-                {{ __('Tem certeza que deseja deletar este usuário?') }}
-            </h2>
+            <form method="post" action="{{ route('profile.destroy') }}">
+                @csrf
+                @method('delete')
 
-            <p class="mt-1 text-sm text-gray-600">
-                {{ __('Depois que sua conta for excluída, todos os seus recursos e dados serão excluídos permanentemente. Antes de excluir sua conta, baixe todos os dados ou informações que deseja reter.') }}
-            </p>
+                <div class="profile-form-group">
+                    <label for="password" class="profile-label">Digite sua senha para confirmar</label>
+                    <input id="password" name="password" type="password" class="profile-input" placeholder="••••••••" required>
+                    @error('password', 'userDeletion')
+                        <span class="profile-error">{{ $message }}</span>
+                    @enderror
+                </div>
 
-            <div class="mt-6">
-                <x-input-label for="password" value="{{ __('Senha') }}" class="sr-only" />
+                <div class="modal-actions">
+                    <button type="button" onclick="closeDeleteModal()" class="profile-btn-secondary">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="profile-btn-danger">
+                        Apagar conta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-                <x-text-input
-                    id="password"
-                    name="password"
-                    type="password"
-                    class="mt-1 block w-3/4"
-                    placeholder="{{ __('Senha') }}"
-                />
+    <script>
+        function openDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'flex';
+        }
 
-                <x-input-error :messages="$errors->userDeletion->get('password')" class="mt-2" />
-            </div>
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+        }
 
-            <div class="mt-6 flex justify-end">
-                <x-secondary-button x-on:click="$dispatch('close')">
-                    {{ __('Cancelar') }}
-                </x-secondary-button>
+        // Fechar modal com ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeDeleteModal();
+            }
+        });
 
-                <x-danger-button class="ms-3">
-                    {{ __('Apagar conta') }}
-                </x-danger-button>
-            </div>
-        </form>
-    </x-modal>
+        // Mostrar modal se houver erros
+        @if($errors->userDeletion->isNotEmpty())
+            openDeleteModal();
+        @endif
+    </script>
 </section>
